@@ -29,10 +29,24 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({
+
+    const crowdCollection = client.db("crowdDB").collection('crowd');
+
+    await client.db("crowdDB").command({
       ping: 1
     });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+    app.get('/getCrowd', async (req, res) => {
+      const result = JSON.stringify(client.db('crowdDB').collection('crowd'));
+      res.send(result);
+    })
+
+    app.post('/addCrowd', async (req, res) => {
+      const newCrowd = req.body;
+      const result = await crowdCollection.insertOne(newCrowd);
+      res.send(result);
+    });
   } finally {
     await client.close();
   }
