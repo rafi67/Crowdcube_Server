@@ -15,6 +15,8 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.NAME}:${process.env.SECURITY_KEY}@cluster0.bk0nm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
+// const uri = 'mongodb://localhost:27017';
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 
 const client = new MongoClient(uri, {
@@ -30,25 +32,27 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
 
-    const crowdCollection = client.db("crowdDB").collection('crowd');
+    const campaignCollection = client.db("crowdDB").collection('campaign');
 
     await client.db("crowdDB").command({
       ping: 1
     });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log("Pinged your deployment. You su ccessfully connected to MongoDB!");
 
-    app.get('/getCrowd', async (req, res) => {
-      const result = JSON.stringify(client.db('crowdDB').collection('crowd'));
+    app.get('/getAllCampaigns', async (req, res) => {
+      const allCampaigns = campaignCollection.find();
+      const result = await allCampaigns.toArray();
       res.send(result);
     })
 
-    app.post('/addCrowd', async (req, res) => {
-      const newCrowd = req.body;
-      const result = await crowdCollection.insertOne(newCrowd);
+    app.post('/addCampaign', async (req, res) => {
+      const newCampaign = req.body;
+      const result = await campaignCollection.insertOne(newCampaign);
       res.send(result);
     });
-  } finally {
+  } catch (err) {
     await client.close();
+    console.log(err.message);
   }
 }
 run().catch(console.dir);
