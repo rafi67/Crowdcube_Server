@@ -4,7 +4,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 const {
   MongoClient,
-  ServerApiVersion
+  ServerApiVersion,
+  ObjectId
 } = require('mongodb');
 require('dotenv').config();
 
@@ -51,14 +52,32 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/deleteCampaign/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await campaignCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.get('/getCampaign/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: id
+      };
+      const result = await campaignCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get('/getMyCampaign/:email', async (req, res) => {
-      const email = {
+      const filter = {
         email: req.params.email,
       };
 
-      const getMyCampaign = await (campaignCollection.find(email)).toArray();
+      const getMyCampaign = await (campaignCollection.find(filter)).toArray();
       res.send(getMyCampaign);
-    })
+    });
   } catch (err) {
     await client.close();
     console.log(err);
