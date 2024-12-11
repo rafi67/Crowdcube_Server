@@ -37,22 +37,31 @@ async function run() {
     await client.db("crowdDB").command({
       ping: 1
     });
-    console.log("Pinged your deployment. You su ccessfully connected to MongoDB!");
+    console.log("Pinged your deployment.You successfully connected to MongoDB!");
 
     app.get('/getAllCampaigns', async (req, res) => {
       const allCampaigns = campaignCollection.find();
       const result = await allCampaigns.toArray();
       res.send(result);
-    })
+    });
 
     app.post('/addCampaign', async (req, res) => {
       const newCampaign = req.body;
       const result = await campaignCollection.insertOne(newCampaign);
       res.send(result);
     });
+
+    app.get('/getMyCampaign/:email', async (req, res) => {
+      const email = {
+        email: req.params.email,
+      };
+
+      const getMyCampaign = await (campaignCollection.find(email)).toArray();
+      res.send(getMyCampaign);
+    })
   } catch (err) {
     await client.close();
-    console.log(err.message);
+    console.log(err);
   }
 }
 run().catch(console.dir);
