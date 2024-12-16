@@ -14,9 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 
-const uri = `mongodb+srv://${process.env.NAME}:${process.env.SECURITY_KEY}@cluster0.bk0nm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+// const uri = `mongodb+srv://${process.env.NAME}:${process.env.SECURITY_KEY}@cluster0.bk0nm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// const uri = 'mongodb://localhost:27017';
+const uri = 'mongodb://localhost:27017';
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 
@@ -46,9 +46,43 @@ async function run() {
       res.send(result);
     });
 
+    app.post('/addMultipleCampaign', async (req, res) => {
+      const campaigns = req.body;
+      const options = {
+        ordered: true
+      };
+      const result = await campaignCollection.insertMany(campaigns, options);
+      res.send(result);
+    });
+
     app.post('/addCampaign', async (req, res) => {
       const newCampaign = req.body;
       const result = await campaignCollection.insertOne(newCampaign);
+      res.send(result);
+    });
+
+    app.put('/updateCampaign/:id', async (req, res) => {
+      const update = req.body;
+      const id = req.params.id;
+      const filter = {
+        _id: new ObjectId(id),
+      };
+
+      const options = {upsert: true};
+      const campaign = {
+        $set: {
+          name: update.name,
+          email: update.email,
+          title: update.title,
+          type: update.type,
+          amount: update.amount,
+          deadLine: update.deadLine,
+          photo: update.photo,
+          description: update.description,
+        },
+      };
+      const result = await campaignCollection.updateOne(filter, campaign, options);
+
       res.send(result);
     });
 
@@ -64,7 +98,7 @@ async function run() {
     app.get('/getCampaign/:id', async (req, res) => {
       const id = req.params.id;
       const query = {
-        _id: id
+        _id: new ObjectId(id),
       };
       const result = await campaignCollection.findOne(query);
       res.send(result);
