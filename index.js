@@ -111,6 +111,16 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/getDonation/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = {
+        email: email,
+      };
+
+      const result = await donationCollection.find(filter);
+      res.send(result);
+    });
+
     app.get('/getMyCampaign/:email', async (req, res) => {
       const filter = {
         email: req.params.email,
