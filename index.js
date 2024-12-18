@@ -34,6 +34,7 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const campaignCollection = client.db("crowdDB").collection('campaign');
+    const donationCollection = client.db('crowdDB').collection('donation');
 
     await client.db("crowdDB").command({
       ping: 1
@@ -58,6 +59,12 @@ async function run() {
     app.post('/addCampaign', async (req, res) => {
       const newCampaign = req.body;
       const result = await campaignCollection.insertOne(newCampaign);
+      res.send(result);
+    });
+
+    app.post('/addDonation', async (req, res) => {
+      const newDonation = req.body;
+      const result = await donationCollection.insertOne(newDonation);
       res.send(result);
     });
 
