@@ -75,7 +75,7 @@ async function run() {
           email: update.email,
           title: update.title,
           type: update.type,
-          amount: update.amount,
+          amount: parseInt(update.amount),
           deadLine: update.deadLine,
           photo: update.photo,
           description: update.description,
