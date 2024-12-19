@@ -75,7 +75,9 @@ async function run() {
         _id: new ObjectId(id),
       };
 
-      const options = {upsert: true};
+      const options = {
+        upsert: true
+      };
       const campaign = {
         $set: {
           name: update.name,
@@ -117,8 +119,36 @@ async function run() {
         email: email,
       };
 
-      const result = await donationCollection.find(filter);
-      res.send(result);
+      const campaigns = await campaignCollection.find().toArray();
+
+      const donations = await donationCollection.find(filter).toArray();
+
+      let donationData = [];
+
+      donations.map(donation => {
+        const campaign = campaigns.find(c => c._id.toString() === donation.donatedId.toString());
+
+        if (campaign !== 'undefined') {
+          const title = campaign.title;
+          const photo = campaign.photo;
+          const type = campaign.type;
+          const amount = donation.donatedAmount;
+
+          const data = {
+            title: title,
+            photo: photo,
+            type: type,
+            amount: amount,
+          };
+
+          donationData.push(data);
+        }
+
+      });
+
+      console.log(donationData);
+
+      res.send(donationData);
     });
 
     app.get('/getMyCampaign/:email', async (req, res) => {
