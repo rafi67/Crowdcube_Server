@@ -58,7 +58,17 @@ async function run() {
 
     app.post('/addCampaign', async (req, res) => {
       const newCampaign = req.body;
-      const result = await campaignCollection.insertOne(newCampaign);
+      const docs = {
+        name: newCampaign.name,
+        email: newCampaign.email,
+        title: newCampaign.title,
+        type: newCampaign.type,
+        amount: parseInt(newCampaign.amount),
+        deadLine: newCampaign.deadLine,
+        photo: newCampaign.photo,
+        description: newCampaign.description,
+      };
+      const result = await campaignCollection.insertOne(docs);
       res.send(result);
     });
 
@@ -113,6 +123,27 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/getRunningCampaign', async (req, res) => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(today.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      const result = await campaignCollection.find().toArray();
+      let array = [];
+
+      result.map(data => {
+        const date = new Date(data.deadLine);
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const y = date.getFullYear();
+        if (m === month && year === y && data.deadLine >= formattedDate) {
+          array.push(data);
+        }
+      });
+
+      res.send(array);
+    });
+
     app.get('/getDonation/:email', async (req, res) => {
       const email = req.params.email;
       const filter = {
@@ -145,8 +176,6 @@ async function run() {
         }
 
       });
-
-      console.log(donationData);
 
       res.send(donationData);
     });
