@@ -30,16 +30,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
 
     const campaignCollection = client.db("crowdDB").collection('campaign');
     const donationCollection = client.db('crowdDB').collection('donation');
 
-    await client.db("crowdDB").command({
-      ping: 1
-    });
-    console.log("Pinged your deployment.You successfully connected to MongoDB!");
+    // await client.db("crowdDB").command({
+    //   ping: 1
+    // });
+    // console.log("Pinged your deployment.You successfully connected to MongoDB!");
 
     app.get('/getAllCampaigns', async (req, res) => {
       const allCampaigns = campaignCollection.find();
