@@ -14,9 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 
-// const uri = `mongodb+srv://${process.env.NAME}:${process.env.SECURITY_KEY}@cluster0.bk0nm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.NAME}:${process.env.SECURITY_KEY}@cluster0.bk0nm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-const uri = 'mongodb://localhost:27017';
+// const uri = 'mongodb://localhost:27017';
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 
@@ -129,7 +129,7 @@ async function run() {
       const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
       const day = String(today.getDate()).padStart(2, "0");
       const formattedDate = `${year}-${month}-${day}`;
-      
+
       const result = await campaignCollection.find().toArray();
       let array = [];
 
