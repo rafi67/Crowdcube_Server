@@ -129,14 +129,13 @@ async function run() {
       const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
       const day = String(today.getDate()).padStart(2, "0");
       const formattedDate = `${year}-${month}-${day}`;
-      const result = await campaignCollection.find().limit(7).toArray();
+      
+      const result = await campaignCollection.find().toArray();
       let array = [];
 
       result.map(data => {
         const date = new Date(data.deadLine);
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const y = date.getFullYear();
-        if (data.deadLine >= formattedDate) {
+        if (data.deadLine >= formattedDate && array.length <= 5) {
           array.push(data);
         }
       });
